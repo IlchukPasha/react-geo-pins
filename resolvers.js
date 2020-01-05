@@ -1,12 +1,14 @@
+const { AuthenticationError } = require('apollo-server');
+
+const authenticated = next => (root, args, ctx, info) => {
+  if (!ctx.currentUser) {
+    throw new AuthenticationError('You are not logged in!');
+  }
+  return next(root, args, ctx, info);
+}
+
 module.exports = {
   Query: {
-    me: () => {
-      return {
-        _id: 'ID',
-        name: 'Name',
-        email: 'Email',
-        picture: 'URL'
-      };
-    }
+    me: authenticated((root, args, ctx, info) => ctx.currentUser)
   }
 };
